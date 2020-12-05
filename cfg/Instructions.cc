@@ -28,23 +28,23 @@ string spacesForTabLevel(int tabs) {
         break;                       \
     }
 
-#define GENERATE_TAG_SWITCH(tag, body)                                  \
-    switch (tag) {                                                      \
-        CASE_STATEMENT(body, Ident)                                     \
-            CASE_STATEMENT(body, Alias)                                 \
-            CASE_STATEMENT(body, SolveConstraint)                       \
-            CASE_STATEMENT(body, Send)                                  \
-            CASE_STATEMENT(body, Return)                                \
-            CASE_STATEMENT(body, BlockReturn)                           \
-            CASE_STATEMENT(body, LoadSelf)                              \
-            CASE_STATEMENT(body, Literal)                               \
-            CASE_STATEMENT(body, GetCurrentException)                   \
-            CASE_STATEMENT(body, LoadArg)                               \
-            CASE_STATEMENT(body, ArgPresent)                            \
-            CASE_STATEMENT(body, LoadYieldParams)                       \
-            CASE_STATEMENT(body, Cast)                                  \
-            CASE_STATEMENT(body, TAbsurd)                               \
-            }
+#define GENERATE_TAG_SWITCH(tag, body)            \
+    switch (tag) {                                \
+        CASE_STATEMENT(body, Ident)               \
+        CASE_STATEMENT(body, Alias)               \
+        CASE_STATEMENT(body, SolveConstraint)     \
+        CASE_STATEMENT(body, Send)                \
+        CASE_STATEMENT(body, Return)              \
+        CASE_STATEMENT(body, BlockReturn)         \
+        CASE_STATEMENT(body, LoadSelf)            \
+        CASE_STATEMENT(body, Literal)             \
+        CASE_STATEMENT(body, GetCurrentException) \
+        CASE_STATEMENT(body, LoadArg)             \
+        CASE_STATEMENT(body, ArgPresent)          \
+        CASE_STATEMENT(body, LoadYieldParams)     \
+        CASE_STATEMENT(body, Cast)                \
+        CASE_STATEMENT(body, TAbsurd)             \
+    }
 
 std::string Instruction::toString(const core::GlobalState &gs, const CFG &cfg) const {
 #define TO_STRING(name) return static_cast<const name *>(this)->toString(gs, cfg);
@@ -85,7 +85,8 @@ string Return::showRaw(const core::GlobalState &gs, const CFG &cfg, int tabs) co
                        this->what.showRaw(gs, cfg, tabs + 1));
 }
 
-BlockReturn::BlockReturn(shared_ptr<core::SendAndBlockLink> link, LocalRef what) : Instruction(Tag::BlockReturn), link(std::move(link)), what(what) {
+BlockReturn::BlockReturn(shared_ptr<core::SendAndBlockLink> link, LocalRef what)
+    : Instruction(Tag::BlockReturn), link(std::move(link)), what(what) {
     categoryCounterInc("cfg", "blockreturn");
 }
 
@@ -114,8 +115,8 @@ string LoadSelf::showRaw(const core::GlobalState &gs, const CFG &cfg, int tabs) 
 Send::Send(LocalRef recv, core::NameRef fun, core::LocOffsets receiverLoc, u2 numPosArgs,
            const InlinedVector<LocalRef, 2> &args, InlinedVector<core::LocOffsets, 2> argLocs, bool isPrivateOk,
            const shared_ptr<core::SendAndBlockLink> &link)
-    : Instruction(Tag::Send), isPrivateOk(isPrivateOk), numPosArgs(numPosArgs), fun(fun), recv(recv), receiverLoc(receiverLoc),
-      argLocs(std::move(argLocs)), link(move(link)) {
+    : Instruction(Tag::Send), isPrivateOk(isPrivateOk), numPosArgs(numPosArgs), fun(fun), recv(recv),
+      receiverLoc(receiverLoc), argLocs(std::move(argLocs)), link(move(link)) {
     ENFORCE(numPosArgs <= args.size(), "Expected {} positional arguments, but only have {} args", numPosArgs,
             args.size());
 

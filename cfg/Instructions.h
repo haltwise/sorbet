@@ -70,8 +70,7 @@ private:
     void deleteTagged();
 
     friend InsnPtr;
-    template <class To>
-    friend To *cast_instruction(Instruction *);
+    template <class To> friend To *cast_instruction(Instruction *);
     const Tag tag;
 };
 
@@ -85,15 +84,15 @@ template <class To> To *cast_instruction(Instruction *what) {
     if (what->tag != InsnToTag<To>::value) {
         return nullptr;
     }
-    return static_cast<To*>(what);
+    return static_cast<To *>(what);
 }
 
 template <class To> bool isa_instruction(Instruction *what) {
     return cast_instruction<To>(what) != nullptr;
 }
 
-#define INSN(name)                              \
-    class name;                                 \
+#define INSN(name)                                                                  \
+    class name;                                                                     \
     template <> struct InsnToTag<name> { static constexpr Tag value = Tag::name; }; \
     class __attribute__((aligned(8))) name final
 
@@ -123,7 +122,8 @@ INSN(SolveConstraint) : public Instruction {
 public:
     LocalRef send;
     std::shared_ptr<core::SendAndBlockLink> link;
-    SolveConstraint(const std::shared_ptr<core::SendAndBlockLink> &link, LocalRef send) : Instruction(Tag::SolveConstraint), send(send), link(link){};
+    SolveConstraint(const std::shared_ptr<core::SendAndBlockLink> &link, LocalRef send)
+        : Instruction(Tag::SolveConstraint), send(send), link(link){};
     std::string toString(const core::GlobalState &gs, const CFG &cfg) const;
     std::string showRaw(const core::GlobalState &gs, const CFG &cfg, int tabs = 0) const;
 };
@@ -234,7 +234,8 @@ INSN(LoadYieldParams) : public Instruction {
 public:
     std::shared_ptr<core::SendAndBlockLink> link;
 
-    LoadYieldParams(const std::shared_ptr<core::SendAndBlockLink> &link) : Instruction(Tag::LoadYieldParams), link(link) {
+    LoadYieldParams(const std::shared_ptr<core::SendAndBlockLink> &link)
+        : Instruction(Tag::LoadYieldParams), link(link) {
         categoryCounterInc("cfg", "loadarg");
     };
     std::string toString(const core::GlobalState &gs, const CFG &cfg) const;
@@ -248,7 +249,8 @@ public:
     VariableUseSite value;
     core::TypePtr type;
 
-    Cast(LocalRef value, const core::TypePtr &type, core::NameRef cast) : Instruction(Tag::Cast), cast(cast), value(value), type(type) {}
+    Cast(LocalRef value, const core::TypePtr &type, core::NameRef cast)
+        : Instruction(Tag::Cast), cast(cast), value(value), type(type) {}
 
     std::string toString(const core::GlobalState &gs, const CFG &cfg) const;
     std::string showRaw(const core::GlobalState &gs, const CFG &cfg, int tabs = 0) const;
@@ -305,8 +307,7 @@ template <> inline const InsnPtr &InsnPtr::cast(const InsnPtr &what) {
     return what;
 }
 
-template <typename T, class... Args>
-InsnPtr make_insn(Args&& ...arg) {
+template <typename T, class... Args> InsnPtr make_insn(Args &&... arg) {
     return InsnPtr(new T(std::forward<Args>(arg)...));
 }
 

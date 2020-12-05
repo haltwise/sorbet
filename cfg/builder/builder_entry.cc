@@ -33,8 +33,8 @@ unique_ptr<CFG> CFGBuilder::buildFor(core::Context ctx, ast::MethodDef &md) {
         }
         synthesizeExpr(entry, LocalRef::selfVariable(), md.loc,
                        make_insn<Cast>(LocalRef::selfVariable(),
-                                         selfClaz.data(ctx)->enclosingClass(ctx).data(ctx)->selfType(ctx),
-                                         core::Names::cast()));
+                                       selfClaz.data(ctx)->enclosingClass(ctx).data(ctx)->selfType(ctx),
+                                       core::Names::cast()));
 
         BasicBlock *presentCont = entry;
         BasicBlock *defaultCont = nullptr;
